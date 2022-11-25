@@ -24,7 +24,10 @@ try:
 		cv2.imshow('face_detect', img)
 		cv2.waitKey(10)
 except:
-   print(e)
+	pass
+
+print("Writing last image...")
+cv2.imwrite("last_image.png", img)
 
 print("Closing program")
 imcap.release()
