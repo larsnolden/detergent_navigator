@@ -1,0 +1,15 @@
+.DS_Store
+.cache/
+
+# Packaging
+build/
+
+# data
+pidpathData/
+*.svg
+
+#dev setup
+PIDPATH.egg-info
+.idea/
+venv/
+__pycache__/
