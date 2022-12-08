@@ -60,10 +60,10 @@ while True:
     if(corrective_steering > 0):
         # steer left
         go.set_right_speed(corrective_steering)
-        go.set_left_speed(255 - corrective_steering)
-    elif(corrective_steering <1):
+        go.set_left_speed(100 - corrective_steering)
+    elif(corrective_steering < 0):
         # steer right
-        go.set_right_speed(255 - corrective_steering*(-1))
+        go.set_right_speed(100 - corrective_steering*(-1))
         go.set_left_speed(corrective_steering*(-1))
 
 # while True:
