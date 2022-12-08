@@ -6,6 +6,20 @@ import signal
 import sys
 import numpy as np
 
+distanceCenterToWheel = 6
+lastEncoderLeftValue = go.enc_read(0)
+lastEncoderRightValue = go.enc_read(1)
+
+currentRightWheelPos = {
+    "x": 340,
+    "y": 0-distanceCenterToWheel,
+}
+
+currentLeftWheelPos = {
+    "x": 340,
+    "y": 0+distanceCenterToWheel,
+}
+
 def main():
     # distanceCenterToWheel = 6
     # lastEncoderLeftValue = go.enc_read(0)
@@ -33,9 +47,9 @@ def main():
 
 
     ## Setup PID
-    Kp = 5
-    Ki = 0.0
-    Kd = 1
+    Kp = 1
+    Ki = 0.1
+    Kd = 0.05
     pid = PID(Kp, Ki, Kd, setpoint=1)
     combined_motor_speed = 2*255; #both motors go full force
     pid.output_limits = (-255, 255)
@@ -45,35 +59,18 @@ def main():
         y = -600
         return [x, y]
 
-    distanceCenterToWheel = 6
-    lastEncoderLeftValue = go.enc_read(0)
-    lastEncoderRightValue = go.enc_read(1)
+    # currentRightWheelPos = {
+    #     "x": 340,
+    #     "y": 0-distanceCenterToWheel,
+    # }
 
-    currentRightWheelPos = {
-        "x": 340,
-        "y": 0-distanceCenterToWheel,
-    }
+    # currentLeftWheelPos = {
+    #     "x": 340,
+    #     "y": 0+distanceCenterToWheel,
+    # }
 
-    currentLeftWheelPos = {
-        "x": 340,
-        "y": 0+distanceCenterToWheel,
-    }
-
-
-    while True:
-        wheelCircumf = 19.63 # centiMeters
-        encoderStepsLeft = go.enc_read(0) - lastEncoderLeftValue
-        lastEncoderLeftValue = go.enc_read(0)
-        encoderStepsRight = go.enc_read(1) - lastEncoderRightValue
-        lastEncoderRightValue = go.enc_read(1)
-        print("encoderStepsLeft: ", encoderStepsLeft)
-        print("encoderStepsRight: ", encoderStepsRight)
-        print("lastEncoderLeftValue: ", lastEncoderLeftValue)
-        print("lastEncoderRightValue: ", lastEncoderRightValue)
-
-        distanceTraveledLeft = wheelCircumf*encoderStepsLeft/18
-        distanceTraveledRight = wheelCircumf*encoderStepsRight/18
-        ##
+    def setNewWheelPosition(distanceTraveledLeft, distanceTraveledRight):
+        global currentleftwheelPos, currentRightWheelPos
         perpendicularX = -(currentRightWheelPos["y"] - currentLeftWheelPos["y"])
         perpendicularY = currentRightWheelPos["x"] - currentLeftWheelPos["x"]
 
@@ -92,26 +89,35 @@ def main():
             "x": currentRightWheelPos["x"] - unitVectorPerpendicular["x"] * distanceTraveledRight,
             "y": currentRightWheelPos["y"] + unitVectorPerpendicular["y"] * distanceTraveledRight,
         }
+        print("New right wheel pos: ", currentRightWheelPos["x"], currentRightWheelPos["y"])
 
-        print("unitVectorPerpendicular", unitVectorPerpendicular)
-        print("currentLeftWheelPos", currentLeftWheelPos)
-        print("currentRightWheelPos", currentRightWheelPos)
-        ##
+    def estimateLocationEncoder():
+        global lastEncoderLeftValue, lastEncoderRightValue
+        wheelCircumf = 19.63 # centiMeters
+        encoderStepsLeft = go.enc_read(0) - lastEncoderLeftValue
+        lastEncoderLeftValue = go.enc_read(0)
+        encoderStepsRight = go.enc_read(1) - lastEncoderRightValue
+        lastEncoderRightValue = go.enc_read(1)
+        print("encoderStepsLeft: ", encoderStepsLeft, "lastEncoderRightValue: ", encoderStepsRight)
+
+        distanceTraveledLeft = wheelCircumf*encoderStepsLeft/18
+        distanceTraveledRight = wheelCircumf*encoderStepsRight/18
+        setNewWheelPosition(distanceTraveledLeft, distanceTraveledRight)
+        print("Distance traveled left: ", distanceTraveledLeft, "right: ", distanceTraveledRight)
         #vector from left to right
         vectorX = currentRightWheelPos["x"] - currentLeftWheelPos["x"]
         vectorY = currentRightWheelPos["y"] - currentLeftWheelPos["y"]
         vectorFromLeftWheelToCenter = [vectorX/2, vectorY/2] # center is half way between both wheels
 
-        # print("Current Right Wheel Pos X: ", currentRightWheelPos["x"], "Current Right Wheel Pos Y: ", currentRightWheelPos["y"])
-        # print("Current Left Wheel Pos X: ", currentLeftWheelPos["x"], "Current Right Wheel Pos Y: ", currentLeftWheelPos["y"])
-        print("Vector from Left Wheel to center: ", vectorFromLeftWheelToCenter)
-        
-        centerPosition = [currentLeftWheelPos["x"] + vectorFromLeftWheelToCenter[0], currentLeftWheelPos["y"] + vectorFromLeftWheelToCenter[1]]
+        print("currentleftwheel pos:", currentLeftWheelPos["x"], "Vector from left to center: ", vectorFromLeftWheelToCenter[0], " sum: ", currentLeftWheelPos["x"] - vectorFromLeftWheelToCenter[0])
 
-        x_loc = centerPosition[0]
-        y_loc = centerPosition[1]
+        centerPosition = [currentLeftWheelPos["x"] - vectorFromLeftWheelToCenter[0], currentLeftWheelPos["y"] + vectorFromLeftWheelToCenter[1]]
+        return [centerPosition[0], centerPosition[1]]
+
+    while True:
+        x_loc, y_loc = estimateLocationEncoder()
         print("Current position:", x_loc, y_loc)
-        y_ref = ideal_path.getY(int(x_loc))
+        y_ref = ideal_path.getY(x_loc)
         error = int(y_loc - y_ref)
         print('error: %s', error)
 
@@ -120,6 +126,7 @@ def main():
             go.set_speed(100)
             go.fwd()
 
+        print(x_loc, y_loc)
         # set the desired value (setpoint)
         pid.setpoint = y_ref
         corrective_steering = int(pid(y_loc))
@@ -139,8 +146,6 @@ def main():
             go.led_on(1)
             go.led_off(0)
             go.fwd()
-
-        print("\n", "===")
 
 if __name__ == "__main__":
     main()
