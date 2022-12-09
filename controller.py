@@ -1,7 +1,7 @@
 from pidController import PidController
-from visualizer import Visualizor
-# import gopigo as go
-from sim import Simulator
+# from visualizer import Visualizor
+import gopigo as go
+# from sim import Simulator
 import math
 
 class Controller:
@@ -23,22 +23,22 @@ class Controller:
     }
 
     def __init__(self, debug=False):
-        self.go = Simulator(0.01)
+        # self.go = Simulator(0.01)
         self.debug = debug
         self.pidController = PidController()
-        self.viz = Visualizor(self.pidController.getXY())
+        # self.viz = Visualizor(self.pidController.getXY())
         # Initializing encoder tracker with current position (offsetting)
-        self.lastEncoderValues["left"] = self.go.enc_read(0)
-        self.lastEncoderValues["right"] = self.go.enc_read(1)
+        self.lastEncoderValues["left"] = go.enc_read(0)
+        self.lastEncoderValues["right"] = go.enc_read(1)
         print("Controller setup complete!")
 
     def run(self):
-        self.go.set_left_speed(255)
-        self.go.set_right_speed(255)
-        self.go.fwd()
-        self.viz.update(self.getCenterPosition(), self.wheelPositions, 0)
+        go.set_left_speed(255)
+        go.set_right_speed(255)
+        go.fwd()
+        # self.viz.update(self.getCenterPosition(), self.wheelPositions, 0)
         while True:
-            self.go.tick()
+            # self.go.tick()
             distanceTraveled = self.checkDisplacement()
             # No displacement, skip current loop
             if distanceTraveled["left"] + distanceTraveled["right"] == 0:
@@ -53,34 +53,29 @@ class Controller:
             self.updateWheelPosition('left', distanceTraveled["left"], xPerpendicularVector, yPerpendicularVector)
             self.updateWheelPosition('right', distanceTraveled["right"], xPerpendicularVector, yPerpendicularVector)
 
-            # do A wheel correction cuz idk, float rounding errors or sth
-            XdiffVector = self.wheelPositions["right"]["x"] - self.wheelPositions["left"]["x"]
-            YdiffVector = self.wheelPositions["right"]["y"] - self.wheelPositions["left"]["y"]
-
-            dist = math.sqrt(XdiffVector ** 2 + YdiffVector ** 2)
-            if dist != 12:
-                newXPos = XdiffVector / dist * 12
-                newYPos = YdiffVector / dist * 12
-                self.wheelPositions["right"]["x"] = self.wheelPositions["left"]["x"] + newXPos
-                self.wheelPositions["right"]["y"] = self.wheelPositions["left"]["y"] + newYPos
+            # # do A wheel correction cuz idk, float rounding errors or sth (sim only)
+            # XdiffVector = self.wheelPositions["right"]["x"] - self.wheelPositions["left"]["x"]
+            # YdiffVector = self.wheelPositions["right"]["y"] - self.wheelPositions["left"]["y"]
+            #
+            # dist = math.sqrt(XdiffVector ** 2 + YdiffVector ** 2)
+            # if dist != 12:
+            #     newXPos = XdiffVector / dist * 12
+            #     newYPos = YdiffVector / dist * 12
+            #     self.wheelPositions["right"]["x"] = self.wheelPositions["left"]["x"] + newXPos
+            #     self.wheelPositions["right"]["y"] = self.wheelPositions["left"]["y"] + newYPos
 
             # Steer!
             steerStrength = self.pidController.getSteer(self.getCenterPosition())
             self.steer(steerStrength)
-            self.viz.update(self.getCenterPosition(), self.wheelPositions, steerStrength)
+            # self.viz.update(self.getCenterPosition(), self.wheelPositions, steerStrength)
     
     def stop(self):
-        self.go.stop()
+        go.stop()
 
     # Converting and saving a distance to x and y movement
     def updateWheelPosition(self, leftOrRight, distanceTraveled, xPerpendicularVector, yPerpendicularVector):
         if distanceTraveled == 0:
             return
-
-        # print('+' * 10)
-        # print(distanceTraveled)
-
-        # print("perpendicular: ", xPerpendicularVector, yPerpendicularVector)
 
         # Distance between wheels is 12cm, so the vector is also of length 12
         xUnitVector = xPerpendicularVector/(self.DIST_WHEEL_TO_CENTER*2)
@@ -104,8 +99,8 @@ class Controller:
     
     def checkDisplacement(self):
         # Steps taken by each encoder (1 rotation = 18 steps)
-        leftEncoder = self.go.enc_read(0)
-        rightEncoder = self.go.enc_read(1)
+        leftEncoder = go.enc_read(0)
+        rightEncoder = go.enc_read(1)
 
         # Distance traveled = steps taken * stepsize
         distanceTraveled = {
@@ -125,12 +120,12 @@ class Controller:
 
         # Positive steer, go left, reduce throttle on left wheels
         if steerStrength > 0:
-            self.go.set_left_speed(255 - steerStrength)
-            self.go.set_right_speed(255)
+            go.set_left_speed(255 - steerStrength)
+            go.set_right_speed(255)
         # Negative steer, go right, reduce throttle on left wheels
         else:
-            self.go.set_left_speed(255)
-            self.go.set_right_speed(255 + steerStrength)
+            go.set_left_speed(255)
+            go.set_right_speed(255 + steerStrength)
 
 
 
