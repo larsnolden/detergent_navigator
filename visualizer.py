@@ -24,15 +24,15 @@ class Visualizor:
 
     def drawRobot(self, pos, wheels):
         #body
-        pygame.draw.circle(self.screen, pygame.Color("black"), (pos["x"], self.offset+pos["y"]), 5)
-        pygame.draw.circle(self.screen, pygame.Color("black"), (pos["x"], self.offset+pos["y"]), 10)
+        pygame.draw.circle(self.screen, pygame.Color("black"), (int(pos["x"]), int(self.offset+pos["y"])), 5)
+        pygame.draw.circle(self.screen, pygame.Color("black"), (int(pos["x"]), int(self.offset+pos["y"])), 10)
         #wheels
-        pygame.draw.circle(self.screen, pygame.Color("green"), (wheels["left"]["x"], self.offset+wheels["left"]["y"]), 5)
-        pygame.draw.circle(self.screen, pygame.Color("green"), (wheels["right"]["x"], self.offset+wheels["right"]["y"]), 5)
+        pygame.draw.circle(self.screen, pygame.Color("green"), (int(wheels["left"]["x"]), int(self.offset+wheels["left"]["y"])), 5)
+        pygame.draw.circle(self.screen, pygame.Color("green"), (int(wheels["right"]["x"]), int(self.offset+wheels["right"]["y"])), 5)
 
     def drawTargetPath(self):
         pygame.draw.lines(self.screen, pygame.Color("red"), False, self.optimalPath, 1)
 
     def drawSteerBar(self, steerStrength):
         pygame.draw.rect(self.screen, pygame.Color("red"), pygame.Rect(128, 30, 255, 30))
-        pygame.draw.rect(self.screen, pygame.Color("black"), pygame.Rect(255 + (steerStrength / 2), 34, 10, 28))
+        pygame.draw.rect(self.screen, pygame.Color("black"), pygame.Rect(255 + int(steerStrength / 2), 34, 10, 28))
