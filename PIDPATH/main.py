@@ -59,8 +59,14 @@ class PIDCoords:
     def getMaxX(self):
         return self.maxX
 
+    def getAll(self):
+        return self.XYCoords;
+
     def getMinX(self):
         return self.minX
+
+    def getAll(self):
+        return self.XYCoords;
 
     def getY(self, x):
         try:
