@@ -10,9 +10,12 @@ class Visualizor:
             self.optimalPath.append([x, self.offset+optimalpath[x]])
         self.screen = pygame.display.set_mode([500, 500])
         self.screen.fill((255, 255, 255))
+        self.font = pygame.font.SysFont(None, 20)
+        #self.surface = 
+        #self.screen = pygame.transform.flip(self.screen, False, True)
         print("Simulator initialized!")
 
-    def update(self, botPosition, wheelPositions, steerStrength):
+    def update(self, botPosition, wheelPositions, steerStrength, totalTraveled, pVector):
         for event in pygame.event.get():
              if event.type == pygame.QUIT:
                  print("event happened, quit")
@@ -20,7 +23,23 @@ class Visualizor:
         self.drawTargetPath()
         self.drawRobot(botPosition, wheelPositions)
         self.drawSteerBar(steerStrength)
+        self.drawText("total Traveled L:", totalTraveled["left"], 50, 450)
+        self.drawText("total Traveled R:", totalTraveled["right"], 50, 470)
+        self.drawText("steer str:", steerStrength, 50, 420)
+        self.drawText("xPos:", botPosition["x"], 50, 390)
+        self.drawText("yPos:", botPosition["y"], 50, 410)
+        start = pVector[0] 
+        scale = 3
+        pygame.draw.line(self.screen, pygame.Color("red"), [botPosition["x"], self.offset+botPosition["y"]], [botPosition["x"]+pVector[0]*scale, self.offset+botPosition["y"]+pVector[1]*scale], 5)
+        #self.screen.blit(pygame.transform.flip(self.screen, True, True), (500, 500))
+        #self.screen = pygame.transform.flip(self.screen, True, True)
         pygame.display.flip()
+
+    def drawText(self, label, value, xPos, yPos):
+        text = self.font.render(label + str(round(value, 1)), True, pygame.Color("black"))
+        textRect = text.get_rect()
+        textRect.center = (xPos, yPos)
+        self.screen.blit(text, textRect)
 
     def drawRobot(self, pos, wheels):
         #body

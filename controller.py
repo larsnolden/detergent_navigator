@@ -5,8 +5,9 @@ import gopigo as go
 import math
 
 class Controller:
-    DIST_WHEEL_TO_CENTER = 6.0 #cm
-    ENC_STEPSIZE = 19.63/18 #cm/step of the encoder
+    DIST_WHEEL_TO_CENTER = 10/2 #cm
+    ENC_STEPSIZE = 20.73/18 #cm/step of the encoder
+    MAX_SPEED = 100
     wheelPositions = {
         "left": {
             "x": 340.0,
@@ -18,6 +19,10 @@ class Controller:
         }
     }
     lastEncoderValues = {
+        "left": 0,
+        "right": 0
+    }
+    totalDistanceTraveled = {
         "left": 0,
         "right": 0
     }
@@ -33,10 +38,10 @@ class Controller:
         print("Controller setup complete!")
 
     def run(self):
-        go.set_left_speed(255)
-        go.set_right_speed(255)
+        go.set_left_speed(self.MAX_SPEED)
+        go.set_right_speed(self.MAX_SPEED)
         go.fwd()
-        self.viz.update(self.getCenterPosition(), self.wheelPositions, 0)
+        self.viz.update(self.getCenterPosition(), self.wheelPositions, 0, self.totalDistanceTraveled, [0, 0])
         while True:
             # self.go.tick()
             distanceTraveled = self.checkDisplacement()
@@ -45,7 +50,7 @@ class Controller:
                 continue
 
             # self.go.print_motor_speeds()
-            steps = 5
+            steps = 20
             for _ in range(steps):
                 # Perpendicular vector of the vector between wheel right and left
                 xPerpendicularVector = -(self.wheelPositions["right"]["y"] - self.wheelPositions["left"]["y"])
@@ -54,21 +59,16 @@ class Controller:
                 self.updateWheelPosition('left', distanceTraveled["left"]/steps, xPerpendicularVector, yPerpendicularVector)
                 self.updateWheelPosition('right', distanceTraveled["right"]/steps, xPerpendicularVector, yPerpendicularVector)
 
-            # # do A wheel correction cuz idk, float rounding errors or sth (sim only)
-            # XdiffVector = self.wheelPositions["right"]["x"] - self.wheelPositions["left"]["x"]
-            # YdiffVector = self.wheelPositions["right"]["y"] - self.wheelPositions["left"]["y"]
-            # #
-            # dist = math.sqrt(XdiffVector ** 2 + YdiffVector ** 2)
-            # if dist != 12:
-            #     newXPos = XdiffVector / dist * 12
-            #     newYPos = YdiffVector / dist * 12
-            #     self.wheelPositions["right"]["x"] = self.wheelPositions["left"]["x"] + newXPos
-            #     self.wheelPositions["right"]["y"] = self.wheelPositions["left"]["y"] + newYPos
-
             # Steer!
             steerStrength = self.pidController.getSteer(self.getCenterPosition())
+
+            # debugging
+            xPerpendicularVector = -(self.wheelPositions["right"]["y"] - self.wheelPositions["left"]["y"])
+            yPerpendicularVector = (self.wheelPositions["right"]["x"] - self.wheelPositions["left"]["x"])
+
             self.steer(steerStrength)
-            self.viz.update(self.getCenterPosition(), self.wheelPositions, steerStrength)
+            self.viz.update(self.getCenterPosition(), self.wheelPositions, steerStrength, self.totalDistanceTraveled, [xPerpendicularVector, yPerpendicularVector])
+
     
     def stop(self):
         go.stop()
@@ -108,6 +108,8 @@ class Controller:
             "left": (leftEncoder - self.lastEncoderValues["left"]) * self.ENC_STEPSIZE,
             "right": (rightEncoder - self.lastEncoderValues["right"]) * self.ENC_STEPSIZE
         }
+        self.totalDistanceTraveled["left"] += distanceTraveled["left"]
+        self.totalDistanceTraveled["right"] += distanceTraveled["right"]
 
         self.lastEncoderValues["left"] = leftEncoder
         self.lastEncoderValues["right"] = rightEncoder
@@ -121,12 +123,12 @@ class Controller:
 
         # Positive steer, go right, decrease throttle on left wheels
         if steerStrength > 0:
-            go.set_left_speed(255)
-            go.set_right_speed(255 - steerStrength)
+            go.set_left_speed(self.MAX_SPEED)
+            go.set_right_speed(self.MAX_SPEED - steerStrength)
         # Negative steer, go left, reduce throttle on left wheels
         else:
-            go.set_left_speed(255 + steerStrength)
-            go.set_right_speed(255)
+            go.set_left_speed(self.MAX_SPEED + steerStrength)
+            go.set_right_speed(self.MAX_SPEED)
 
 
 
