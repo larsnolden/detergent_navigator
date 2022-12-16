@@ -1,0 +1,9 @@
+README.md
+easygopigo.py
+gopigo.py
+setup.py
+GoPiGo.egg-info/PKG-INFO
+GoPiGo.egg-info/SOURCES.txt
+GoPiGo.egg-info/dependency_links.txt
+GoPiGo.egg-info/requires.txt
+GoPiGo.egg-info/top_level.txt
