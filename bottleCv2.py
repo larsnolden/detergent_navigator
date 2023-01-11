@@ -1,8 +1,6 @@
 import cv2
 import numpy as np
 
-
-cv2.namedWindow("preview")
 # Load image
 cap = cv2.VideoCapture(0)
 # Define kernel size
@@ -34,6 +32,7 @@ while True:
     # print("found color range: ", color_mactual_hsv_minin, " - ", actual_hsv_max)
 
     ret, frame = cap.read()
+    frame = cv2.flip(frame, -1)
     # Apply Gaussian Blur
     frame = cv2.GaussianBlur(frame, kernel_size, 0)
     # Convert to HSV color space
