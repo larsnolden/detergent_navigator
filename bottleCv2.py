@@ -39,8 +39,8 @@ while True:
     hsv = cv2.cvtColor(frame, cv2.COLOR_BGR2HSV)
 
     # Define range of green color in HSV
-    lower_green = (46,66,71)
-    upper_green = (88, 187, 194)
+    lower_green = (23,54,60)
+    upper_green = (77, 137, 202)
 
     # Define range of red color in HSV
     lower_red = (0, 158, 97)
@@ -61,29 +61,29 @@ while True:
     green_contours, _ = cv2.findContours(green_mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
     # Find bounding box around the object
 
-    res = cv2.bitwise_and(frame, frame, mask=cv2.bitwise_or(green_mask, red_mask))
+    # res = cv2.bitwise_and(frame, frame, mask=cv2.bitwise_or(green_mask, red_mask))
 
-    for green_cnt in green_contours:
-        x, y, w, h = cv2.boundingRect(green_cnt)
-        found_bottle = False
-        for red_cnt in red_contours:
-            x2, y2, w2, h2 = cv2.boundingRect(red_cnt)
-            if x2 > x and x2 + w2 < x + w and y2 < y and y-0.3*h < y2:
-                cv2.rectangle(res, (x2, y2), (x2 + w2, y2 + h2), (255, 0, 0), 2)
-                found_bottle = True
-                # break
+    # for green_cnt in green_contours:
+    #     x, y, w, h = cv2.boundingRect(green_cnt)
+    #     found_bottle = False
+    #     for red_cnt in red_contours:
+    #         x2, y2, w2, h2 = cv2.boundingRect(red_cnt)
+    #         if x2 > x and x2 + w2 < x + w and y2 < y and y-0.3*h < y2:
+    #             cv2.rectangle(res, (x2, y2), (x2 + w2, y2 + h2), (255, 0, 0), 2)
+    #             found_bottle = True
+    #             # break
 
-        if found_bottle:
-            cv2.rectangle(res, (x, y), (x + w, y + h), (0, 255, 0), 2)
-            # if x2 > x and x2 < x + w and y2 > y and y2 < y + h:
-        # cv2.rectangle(res, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    #     if found_bottle:
+    #         cv2.rectangle(res, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    #         # if x2 > x and x2 < x + w and y2 > y and y2 < y + h:
+    #     # cv2.rectangle(res, (x, y), (x + w, y + h), (0, 255, 0), 2)
 
-    # for cnt in contours:
-    #     x, y, w, h = cv2.boundingRect(cnt)
-    #     cv2.rectangle(res, (x, y), (x + w, y + h), (0, 255, 0), 2)
+    for cnt in green_contours:
+        x, y, w, h = cv2.boundingRect(cnt)
+        cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
     
 
-    cv2.imshow("image", res)
+    cv2.imshow("image", frame)
 
     if cv2.waitKey(1) & 0xFF == ord('q'):
         break
