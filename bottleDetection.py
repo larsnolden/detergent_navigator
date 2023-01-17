@@ -7,6 +7,8 @@ import math
 cap = cv2.VideoCapture(0)
 kernel_size = (5,5)
 
+print(cap.get(3), ", ", cap.get(4))
+
 while True:   
 
     ret, frame = cap.read()
@@ -46,9 +48,11 @@ while True:
                 cv2.rectangle(frame, (x, y), (x + w, y + h), (0, 255, 0), 2)
                 found_bottle = True
                 distance = 823.055764 * math.exp(-0.033767 * h) + 148.197165 * math.exp(-0.004140 * h)
-                hits.append((distance, w))
-                print(f"Found bottle with distance: {distance}")
-                # hits.append((h, x + w / 2))
+                centerPos = x2 + w2/2
+                # y = -4E-06x2 - 0.105x + 34.131
+                angle = -0.000004 * (centerPos**2) - 0.105 * centerPos + 34.131
+                hits.append((distance, angle))
+                print(f"Found bottle with distance: {distance} and angle: {angle}")
                 break
 
         if found_bottle:
