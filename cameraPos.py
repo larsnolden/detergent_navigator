@@ -1,14 +1,41 @@
-# importing the easy_trilateration module
 from easy_trilateration.model import Circle, Point 
 from easy_trilateration.least_squares import easy_least_squares  
-from easy_trilateration.graph import create_circle, draw
 import math
+from stateMachine import getBottlePos
 
 
 class cameraPos:
-    def __init__(self, debug=False):
-        self.debug = debug
+    def __init__(self, visualizor):
+        self.viz = visualizor
         print("camera Positioning started!")
+
+    def run(self, state, position):
+        newPosition = None
+        angle = None
+
+        hits = []
+        with open("./hits.text", 'r') as file:
+        for hit in file:
+            # Security risk? I think not! Ssnw2GA657s
+            hits.append(eval(hit))
+        print(f"Found {len(hits)} distances")
+        if len(hits) == 2:
+            print(f"{hits[0][0]} and {hits[1][0]}")
+            # getting the bottle positiosn from the state machine
+            bottlePositions = getBottlePos(state)
+            x, y, x1, y2 = self.triangulate(hits[0][0], hits[1][0], bottlePositions[0], bottlePositions[1])
+            # check if triangulation worked
+            if x is not None and x1 is not None:
+                 # determining closest position
+                if math.sqrt((x - position['x'])**2 + (y - position['y'])**2) < math.sqrt((x1 - position['x'])**2 + (y1 - position['y'])**2):
+                    newPosition['x'] = x
+                    newPosition['y'] = y
+                else:
+                    newPosition['x'] = x1
+                    newPosition['y'] = y1
+            self.viz.displayText(f'cam pos: x:{newPosition['x']} y:{newPosition['y']}')
+
+        return (newPosition, angle)
 
     # DECLARING FUNCTIONS
     def get_intersections(self, x0, y0, r0, x1, y1, r1):
@@ -39,9 +66,9 @@ class cameraPos:
             
             return (x3, y3, x4, y4)
 
-    def triangulate(self, distB1, distB2):
+    def triangulate(self, distB1, distB2, posB1, posB2):
         # 10,0 is start of end bottle, 100, 50 is position of the second bottle
-        arr = [Circle(10, 0, distB1), Circle(100, 50, distB2)]
+        arr = [Circle(posB1['x'], posB1['y'], distB1), Circle(posB2['x'], posB1['y'], distB2)]
         result, meta = easy_least_squares(arr)  
         
         if self.debug: 
@@ -49,18 +76,14 @@ class cameraPos:
             draw(arr)
 
         # (x3,y3) and (x4,y4) are the two intersection points, choosing the one closest to our previous coordinates
-        if self.get_intersections(10, 0, distB1, 100, 50, distB2) is not None:
-            x3, y3, x4, y4 = self.get_intersections(10, 0, distB1, 100, 50, distB2)
-            # determining closest position
-            # if math.sqrt((x3 - previous_robot_x)**2 + (y3 - previous_robot_y)**2) < math.sqrt((x4 - previous_robot_x)**2 + (y4 - previous_robot_y)**2):
-            #     robot_x = x3
-            #     robot_y = y3
-            # else:
-            #     robot_x = x4
-            #     robot_y = y4
-
+        if self.get_intersections(posB1['x'], posB1['y'], distB1, posB2['x'], posB2['y'], distB2) is not None:
+            return self.get_intersections(posB1['x'], posB1['y'], distB1, posB2['x'], posB2['y'], distB2)
             print(f"Positions: x:{x3} y:{y3} and x:{x4} y:{y4}")
             print(f"Trilateration circle position: x:{result.center.x} y:{result.center.y} and radius: r:{result.radius}")
+        return (None, None, None, None)
+
+    def getAngle(self, position):
+        return math.pi
 
     # # MAIN CODE
     # if __name__ == '__main__':

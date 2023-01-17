@@ -2,33 +2,26 @@ from pidController import PidController
 from visualizer import Visualizor
 from cameraPos import cameraPos
 from encoderPos import encoderPos
+from stateMachine import stateMachine
 import gopigo as go
 # from sim import Simulator
 import math
 
 class Controller:
     DIST_WHEEL_TO_CENTER = 10/2 #cm
-    ENC_STEPSIZE = 20.73/18 #cm/step of the encoder
     MAX_SPEED = 100
-    wheelPositions = {
-        "left": {
-            "x": 340.0,
-            "y": -DIST_WHEEL_TO_CENTER
-        },
-        "right": {
-            "x": 340.0,
-            "y": DIST_WHEEL_TO_CENTER
-        }
-    }
-    totalDistanceTraveled = {
-        "left": 0,
-        "right": 0
+    position = {
+        "x": 0,
+        "y": 350
     }
 
     def __init__(self, debug=False):
         # self.go = Simulator(0.01)
         self.pidController = PidController()
         self.viz = Visualizor(self.pidController.getXY())
+        self.encoder = encoderPos(self.viz)
+        self.camera = cameraPos(self.viz)
+        self.statemachine = stateMachine(self.viz)
         # Initializing encoder tracker with current position (offsetting)
         print("Controller setup complete!")
 
@@ -36,11 +29,21 @@ class Controller:
         go.set_left_speed(self.MAX_SPEED)
         go.set_right_speed(self.MAX_SPEED)
         go.fwd()
-        self.viz.update(self.getCenterPosition(), self.wheelPositions, 0, self.totalDistanceTraveled, [0, 0])
+        # self.viz.update(self.getCenterPosition(), self.wheelPositions, 0, self.totalDistanceTraveled, [0, 0])
 
         while True:
+            # update encoder position
+            encoderPos = self.encoder.run()
+            # get the camera angle and perceived position
+            cameraPos, angle = self.camera.run(self.stateMachine.getState(), position)
+            self.steer(pid.getSteer(position))
+            if cameraPos is not None:
+                self.encoder.correctPosition(cameraPos, angle)
             
-
+            steerStrength = self.pidController.getSteer(self.encoder.getCenterPosition()['x'])
+            self.viz.setSteerStrength(steerStrength)
+            self.steer(steerStrength)
+            self.viz.display()
     
     def stop(self):
         go.stop()

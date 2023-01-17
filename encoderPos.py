@@ -1,10 +1,9 @@
-from pidController import PidController
 from visualizer import Visualizor
 import gopigo as go
 # from sim import Simulator
 import math
 
-class encodePos:
+class encoderPos:
     DIST_WHEEL_TO_CENTER = 10/2 #cm
     ENC_STEPSIZE = 20.73/18 #cm/step of the encoder
     MAX_SPEED = 100
@@ -27,11 +26,8 @@ class encodePos:
         "right": 0
     }
 
-    def __init__(self, debug=False):
-        # self.go = Simulator(0.01)
-        self.debug = debug
-        self.pidController = PidController()
-        self.viz = Visualizor(self.pidController.getXY())
+    def __init__(self, visualizor):
+        self.viz = visualizor
         # Initializing encoder tracker with current position (offsetting)
         self.lastEncoderValues["left"] = go.enc_read(0)
         self.lastEncoderValues["right"] = go.enc_read(1)
@@ -52,6 +48,8 @@ class encodePos:
 
             self.updateWheelPosition('left', distanceTraveled["left"]/steps, xPerpendicularVector, yPerpendicularVector)
             self.updateWheelPosition('right', distanceTraveled["right"]/steps, xPerpendicularVector, yPerpendicularVector)
+        self.viz.setBotPosition(self.getCenterPosition(), self.wheelPositions)
+        return self.getCenterPosition()
 
     # Converting and saving a distance to x and y movement
     def updateWheelPosition(self, leftOrRight, distanceTraveled, xPerpendicularVector, yPerpendicularVector):
@@ -96,7 +94,20 @@ class encodePos:
 
         return distanceTraveled
 
+    # correc the encoder's position
+    def correctPosition(self, newPosition, newAngle):
+        # get the x traversal
+        xUnitVector = math.cos(newAngle-(0.5 * math.pi))
+        # y value of unit circle (90 degrees backwards)
+        yUnitVector = math.sin(newAngle-(0.5 * math.pi))
 
+        xVector = xUnitVector * DIST_WHEEL_TO_CENTER
+        yVector = yUnitVector * DIST_WHEEL_TO_CENTER
+
+        self.wheelPositions['left']['x'] = newPosition['x'] - xVector
+        self.wheelPositions['left']['y'] = newPosition['y'] - yVector
+        self.wheelPositions['right']['x'] = newPosition['x'] + xVector
+        self.wheelPositions['right']['y'] = newPosition['y'] + yVector
 
         
 
