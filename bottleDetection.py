@@ -20,12 +20,12 @@ while True:
 
     # good calibrated values!
     # Define range of green color in HSV
-    lower_green = (42,17,85)
-    upper_green = (77, 255, 255)
+    # lower_green = (42,17,85)
+    # upper_green = (77, 255, 255)
 
     # # Define range of green color in HSV
-    # lower_green = (43,21,81)
-    # upper_green = (81, 255, 255)
+    lower_green = (43,21,81)
+    upper_green = (81, 255, 255)
 
     # Define range of red color in HSV
     lower_red = (27, 0, 0)

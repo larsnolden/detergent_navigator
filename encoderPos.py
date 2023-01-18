@@ -2,6 +2,7 @@ from visualizer import Visualizor
 import gopigo as go
 # from sim import Simulator
 import math
+import time
 
 class encoderPos:
     DIST_WHEEL_TO_CENTER = 10/2 #cm
@@ -35,9 +36,14 @@ class encoderPos:
 
     # update the positioning of the encoders
     def run(self):
+        # time.sleep(0.05)
+        print("cehking displacement")
         distanceTraveled = self.checkDisplacement()
+        print(f"current pos: {self.getCenterPosition()}")
+        print(f"dist traveled: {distanceTraveled}")
         # No displacement, skip current loop
         if distanceTraveled["left"] + distanceTraveled["right"] == 0:
+            print(f"no dist traveled")
             return self.getCenterPosition()
 
         steps = 20
@@ -49,6 +55,7 @@ class encoderPos:
             self.updateWheelPosition('left', distanceTraveled["left"]/steps, xPerpendicularVector, yPerpendicularVector)
             self.updateWheelPosition('right', distanceTraveled["right"]/steps, xPerpendicularVector, yPerpendicularVector)
         self.viz.setBotPosition(self.getCenterPosition(), self.wheelPositions)
+        print(f"new pos: {self.getCenterPosition()}")
         return self.getCenterPosition()
 
     # Converting and saving a distance to x and y movement
@@ -79,7 +86,16 @@ class encoderPos:
     def checkDisplacement(self):
         # Steps taken by each encoder (1 rotation = 18 steps)
         leftEncoder = go.enc_read(0)
+        # time.sleep(0.02)
         rightEncoder = go.enc_read(1)
+        # time.sleep(0.02)
+
+        if rightEncoder < self.lastEncoderValues["right"] or leftEncoder < self.lastEncoderValues["left"] or leftEncoder - self.lastEncoderValues["left"] > 18 or rightEncoder - self.lastEncoderValues["right"] > 18:
+            print("traveled too much")
+            return {'left': 0, 'right': 0}
+
+        print(f"right encoder: {rightEncoder}")
+        print(f"left encoder: {leftEncoder}")
 
         # Distance traveled = steps taken * stepsize
         distanceTraveled = {
@@ -94,18 +110,18 @@ class encoderPos:
 
         return distanceTraveled
 
-    # correc the encoder's position
-    def correctPosition(self, newPosition, newAngle):
-        currentPos = self.getCenterPosition()
-        self.wheelPositions['left']['x'] -= currentPos['x']
-        self.wheelPositions['left']['y'] -= currentPos['y']
-        self.wheelPositions['right']['x'] -= currentPos['x']
-        self.wheelPositions['right']['y'] -= currentPos['y']
+    # # correc the encoder's position
+    # def correctPosition(self, newPosition, newAngle):
+    #     currentPos = self.getCenterPosition()
+    #     self.wheelPositions['left']['x'] -= currentPos['x']
+    #     self.wheelPositions['left']['y'] -= currentPos['y']
+    #     self.wheelPositions['right']['x'] -= currentPos['x']
+    #     self.wheelPositions['right']['y'] -= currentPos['y']
 
-        self.wheelPositions['left']['x'] += newPosition['x']
-        self.wheelPositions['left']['y'] += newPosition['y']
-        self.wheelPositions['right']['x'] += newPosition['x']
-        self.wheelPositions['right']['y'] += newPosition['y']
+    #     self.wheelPositions['left']['x'] += newPosition['x']
+    #     self.wheelPositions['left']['y'] += newPosition['y']
+    #     self.wheelPositions['right']['x'] += newPosition['x']
+    #     self.wheelPositions['right']['y'] += newPosition['y']
 
 
         # self.wheelPositions['left']['x'] += diff['x']

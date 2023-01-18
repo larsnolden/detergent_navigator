@@ -17,7 +17,7 @@ class PidController:
     def __init__(self):
         self.pidStraight = PID(self.KPstraight, self.KIstraight, self.KDstraight)
         self.pidCorner = PID(self.KPcorner, self.KIcorner, self.KDcorner)
-        self.idealPath = PIDCoords(resolution='cm')
+        self.idealPath = PIDCoords(cleanedCSV="./pidpathDataL3/output_clean.csv", resolution='cm')
         self.pidCorner.output_limits = (-255, 255)
         self.pidStraight.output_limits = (-255, 255)
 

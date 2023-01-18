@@ -11,20 +11,36 @@
         <g transform="matrix(0.107624,0,0,0.104162,-25.7333,-10.1354)">
             <rect x="1539.94" y="1057.35" width="929.165" height="480.021" style="fill:rgb(235,235,235);"/>
         </g>
-        <use xlink:href="#_Image1" x="227" y="81.5" width="26px" height="37px"/>
-        <use id="B3" xlink:href="#_Image2" x="46.619" y="140.071" width="7px" height="19px"/>
-        <use id="B1" xlink:href="#_Image3" x="237" y="92.5" width="6px" height="15px"/>
-        <use xlink:href="#_Image4" x="127" y="181.5" width="26px" height="37px"/>
-        <use xlink:href="#_Image5" x="34" y="49" width="7px" height="202px"/>
-        <use id="X4" xlink:href="#_Image6" x="387.998" y="147.998" width="5px" height="5px"/>
-        <use id="X0" xlink:href="#_Image6" x="47.998" y="147.998" width="5px" height="5px"/>
-        <use id="X1" xlink:href="#_Image6" x="135.164" y="213.769" width="5px" height="5px"/>
-        <use id="X2" xlink:href="#_Image6" x="240" y="83.253" width="5px" height="5px"/>
+        <g id="_Image1_" serif:id="_Image1" transform="matrix(1,0,0,1,227,81.5)">
+            <use xlink:href="#_Image1" x="0" y="0" width="26px" height="37px"/>
+        </g>
+        <g id="B3" transform="matrix(1,0,0,1,46.619,140.071)">
+            <use xlink:href="#_Image2" x="0" y="0" width="7px" height="19px"/>
+        </g>
+        <g id="B1" transform="matrix(1,0,0,1,237,92.5)">
+            <use xlink:href="#_Image3" x="0" y="0" width="6px" height="15px"/>
+        </g>
+        <g id="_Image4_" serif:id="_Image4" transform="matrix(1,0,0,1,127,181.5)">
+            <use xlink:href="#_Image4" x="0" y="0" width="26px" height="37px"/>
+        </g>
+        <g id="_Image5_" serif:id="_Image5" transform="matrix(1,0,0,1,34,49)">
+            <use xlink:href="#_Image5" x="0" y="0" width="7px" height="202px"/>
+        </g>
+        <g id="X4" transform="matrix(1,0,0,1,387.998,147.998)">
+            <use xlink:href="#_Image6" x="0" y="0" width="5px" height="5px"/>
+        </g>
+        <g id="X0" transform="matrix(1,0,0,1,47.998,147.998)">
+            <use xlink:href="#_Image6" x="0" y="0" width="5px" height="5px"/>
+        </g>
+        <g id="X1" transform="matrix(1,0,0,1,135.164,213.769)">
+            <use xlink:href="#_Image6" x="0" y="0" width="5px" height="5px"/>
+        </g>
+        <g id="X2" transform="matrix(1,0,0,1,240,83.253)">
+            <use xlink:href="#_Image6" x="0" y="0" width="5px" height="5px"/>
+        </g>
     </g>
     <g id="PIDPATH" transform="matrix(0.100794,0,0,0.100794,2.29664,-4.84972)">
-        <!-- <path d="M129.549,1245.82C227.881,1269.65 443.541,1501.59 473.277,1536.3C634.112,1724.05 1111.58,2280.17 1427.24,2175.93C1801.25,2052.42 1858.03,951.984 2360.25,895.051C2641.54,863.164 3351.09,1322.55 3846.51,1536.3" style="fill:none;stroke:black;stroke-width:1px;"/> -->
-        <path class="st2" d="M986.2,917.7c78,25.3,248.9,272,272.5,308.9c127.5,199.6,506,791,756.2,680.2
-		c296.5-131.3,341.5-1301.5,739.6-1362c223-33.9,785.5,454.6,1178.2,681.9"/>
+        <path d="M129.549,1245.82C227.881,1269.65 443.541,1501.59 473.277,1536.3C634.112,1724.05 1098.44,2466.58 1414.1,2362.34C1788.11,2238.83 1856.11,704.189 2358.33,647.256C2639.62,615.369 3351.09,1322.55 3846.51,1536.3" style="fill:none;stroke:black;stroke-width:1px;"/>
     </g>
     <defs>
         <image id="_Image1" width="26px" height="37px" xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABoAAAAlCAYAAABcZvm2AAAACXBIWXMAAA7EAAAOxAGVKw4bAAACPElEQVRIib2XPWvbQByHH58pGAcb7C3KaEgmQ+WCLiXGHpIpc7YWf4RAPkurL2EKBn+BdrNs6IunugVDpIyJpSI5HtKW63IXCCG1/KI8i9Ahfg93IOn/y5GeM+AVsK/vfwKfgQ8rZDzJC+C8Xq/fuK6rPM9TYRiqMAyV53nKdV1Vr9dvgHP97Fq8tixr0uv11DJ6vZ6yLGsCHK4qOZVS3l5dXS2VGIIgUFLKW+A0rUQ2Go1f8/k8tcQwn8+VbdsRIJdJCnt7ez98319ZYvB93xxj4X+ii36/v7bE0O/3FXDxlOTg5ORkY4nh+PhYAQePLPl8/tN4PN6aaDweq1wu9/GRqN1u/92aRdNqtf6YfKGvbzudjnhk35BOp5MH3twv7OzsDJMk2faGVBzHqlgseveiZrN5t3WL5ujo6M4cne04ztrfqWXo7JcCkFIufZHXRmdLAdRqtVpmIp1dE0C1Wq1mJtLZVQFUKpVKZiKdXRFAqVQqZSYql8sAZQEkSZJkJorjGCAWQBRFUWYinR0JIAzDMDORzg4FMJ1Op5mJdPZUAMPhcJiZSGcPBfB1NBr9zkqks78BUCwWvay/3gJgsVi873a7W99Nt9tlsVi8e7CY9R/2nmebGXiuKUjzLHMdQMGyrMkmk+rl5WWqSRVA2rYdbTh7O8skhlPHcW6DIEgtCYJAOY6zUpswHK7Sj3Z3d7+zRj8ymMZ37bquGgwGajabqdlspgaDgWl816RofLkVpGdAg4cd9gspO+w/1GKd7FR0bN0AAAAASUVORK5CYII="/>

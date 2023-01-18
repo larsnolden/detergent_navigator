@@ -37,15 +37,15 @@ class Controller:
             encoderPos = self.encoder.run()
             print(f"encoder pos: {encoderPos}")
             # get the camera angle and perceived position
-            cameraPos, angle = self.camera.run(self.statemachine.getState(), encoderPos)
+            # cameraPos, angle = self.camera.run(self.statemachine.getState(), encoderPos)
             # if cameraPos is not None:
                 # self.encoder.correctPosition(cameraPos, angle)
-            print(f"camera pos: {cameraPos}")
-            if cameraPos is not None and cameraPos['y'] < 200 and cameraPos['y'] > -200:
+            # print(f"camera pos: {cameraPos}")
+            # if cameraPos is not None and cameraPos['y'] < 200 and cameraPos['y'] > -200:
                 # camera position offsetting
                 # cameraPos['y'] -= 30
                 # self.encoder.correctPosition(cameraPos, angle)
-                self.viz.setCameraPos(cameraPos, angle)
+                # self.viz.setCameraPos(cameraPos, angle)
 
             steerStrength = self.pidController.getSteer(self.encoder.getCenterPosition())
             self.viz.setSteerStrength(steerStrength)
