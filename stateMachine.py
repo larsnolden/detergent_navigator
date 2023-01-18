@@ -6,16 +6,16 @@ BOTLE3R = (100, 110)
 # bottles 1-3
 bottlePositions = [
     {
-        "x": 10,
-        "y": 0
+        "x": 200,
+        "y": 50
     },
     {
         "x": 100,
         "y": -50
     },
     {
-        "x": 200,
-        "y": 50
+        "x": 10,
+        "y": 0
     }
 ]
 
@@ -30,17 +30,17 @@ class stateMachine:
         print("Statemachine setup done!")
 
     def getState(self):
-        return state
+        return self.state
 
     # go to a new state
     def updateState(self, position):
         if position["x"] < 200 and state == 1:
-            state += 1
+            self.state += 1
         elif position["x"] < 100 and state == 2:
-            state += 1
+            self.state += 1
         self.viz.displayText(f'Current state: {state}')
 
-    @staticMethod
+    @staticmethod
     def getBottlePos(state):
         if state == 3: 
             return [bottlePositions[2]]

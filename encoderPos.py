@@ -38,7 +38,7 @@ class encoderPos:
         distanceTraveled = self.checkDisplacement()
         # No displacement, skip current loop
         if distanceTraveled["left"] + distanceTraveled["right"] == 0:
-            return
+            return self.getCenterPosition()
 
         steps = 20
         for _ in range(steps):
@@ -96,18 +96,36 @@ class encoderPos:
 
     # correc the encoder's position
     def correctPosition(self, newPosition, newAngle):
+        currentPos = self.getCenterPosition()
+        self.wheelPositions['left']['x'] -= currentPos['x']
+        self.wheelPositions['left']['y'] -= currentPos['y']
+        self.wheelPositions['right']['x'] -= currentPos['x']
+        self.wheelPositions['right']['y'] -= currentPos['y']
+
+        self.wheelPositions['left']['x'] += newPosition['x']
+        self.wheelPositions['left']['y'] += newPosition['y']
+        self.wheelPositions['right']['x'] += newPosition['x']
+        self.wheelPositions['right']['y'] += newPosition['y']
+
+
+        # self.wheelPositions['left']['x'] += diff['x']
+        # self.wheelPositions['left']['y'] += diff['y']
+        # self.wheelPositions['right']['x'] -= diff['x']
+        # self.wheelPositions['right']['y'] -= diff['y']
+
+
         # get the x traversal
-        xUnitVector = math.cos(newAngle-(0.5 * math.pi))
+        # xUnitVector = math.cos(newAngle-(0.5 * math.pi))
         # y value of unit circle (90 degrees backwards)
-        yUnitVector = math.sin(newAngle-(0.5 * math.pi))
+        # yUnitVector = math.sin(newAngle-(0.5 * math.pi))
 
-        xVector = xUnitVector * DIST_WHEEL_TO_CENTER
-        yVector = yUnitVector * DIST_WHEEL_TO_CENTER
+        # xVector = xUnitVector * self.DIST_WHEEL_TO_CENTER
+        # yVector = yUnitVector * self.DIST_WHEEL_TO_CENTER
 
-        self.wheelPositions['left']['x'] = newPosition['x'] - xVector
-        self.wheelPositions['left']['y'] = newPosition['y'] - yVector
-        self.wheelPositions['right']['x'] = newPosition['x'] + xVector
-        self.wheelPositions['right']['y'] = newPosition['y'] + yVector
+        # self.wheelPositions['left']['x'] = newPosition['x'] - xVector
+        # self.wheelPositions['left']['y'] = newPosition['y'] - yVector
+        # self.wheelPositions['right']['x'] = newPosition['x'] + xVector
+        # self.wheelPositions['right']['y'] = newPosition['y'] + yVector
 
         
 

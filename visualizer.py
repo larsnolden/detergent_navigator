@@ -1,4 +1,5 @@
 import pygame
+import math
 
 class Visualizor:
     offset = 200
@@ -6,6 +7,10 @@ class Visualizor:
     texts = []
 
     botPos = []
+    camPos = None
+    angle = 0
+    camPos2 = None
+    angle2 = 0
     wheelPositions = []
     perpendicularVectors = []
 
@@ -29,6 +34,14 @@ class Visualizor:
     def setBotPosition(self, position, wheelPositions):
         self.botPos = position
         self.wheelPositions = wheelPositions
+
+    def setCameraPos(self, camPos, angle):
+        self.camPos = camPos
+        self.angle = angle
+    
+    def setCameraPos2(self, camPos, angle):
+        self.camPos2 = camPos
+        self.angle2 = angle
     
     def setVectors(self, vectors):
         self.perpendicularVectors = vectors
@@ -41,11 +54,14 @@ class Visualizor:
         self.drawTargetPath()
         self.drawRobot(self.botPos, self.wheelPositions)
         self.drawSteerBar(self.steer)
+        self.drawCamPos(self.camPos, self.angle)
+        self.drawCamPos(self.camPos2, self.angle2)
         # displaying all text items
         yPos = 350
         for text in self.texts:
-            self.drawText(text, 50, yPos)
-            yPos += 30
+            print(f"Printing {text} to Screen")
+            self.drawText(text, 150, yPos)
+            yPos += 15
         
         pygame.display.flip()
 
@@ -53,10 +69,10 @@ class Visualizor:
 
     def resetVariables(self):
         self.texts = []
-        self.steer = 0
-        self.botPos = []
-        self.wheelPositions = []
-        self.perpendicularVectors = []
+        # self.steer = 0
+        # self.botPos = []
+        # self.wheelPositions = []
+        # self.perpendicularVectors = []
 
     # def update(self, botPosition, wheelPositions, steerStrength, totalTraveled, pVector):
     #     for event in pygame.event.get():
@@ -85,12 +101,25 @@ class Visualizor:
         self.screen.blit(text, textRect)
 
     def drawRobot(self, pos, wheels):
+        print(pos)
+        print(wheels)
+        if pos == [] or wheels == []:
+            return
+        self.texts.append(f'bot pos: x:{pos["x"]} y:{pos["y"]}')
         #body
         pygame.draw.circle(self.screen, pygame.Color("black"), (int(pos["x"]), int(self.offset+pos["y"])), 5)
         pygame.draw.circle(self.screen, pygame.Color("black"), (int(pos["x"]), int(self.offset+pos["y"])), 10)
         #wheels
         pygame.draw.circle(self.screen, pygame.Color("green"), (int(wheels["left"]["x"]), int(self.offset+wheels["left"]["y"])), 5)
         pygame.draw.circle(self.screen, pygame.Color("green"), (int(wheels["right"]["x"]), int(self.offset+wheels["right"]["y"])), 5)
+
+    def drawCamPos(self, camPos, angle):
+        if camPos is None:
+            return
+        self.texts.append(f'cam pos: x:{round(camPos["x"], 1)} y:{round(camPos["y"], 1)}')
+        self.texts.append(f'angle: {math.degrees(angle)}')
+        pygame.draw.circle(self.screen, pygame.Color("red"), (int(camPos["x"]), int(self.offset+camPos["y"])), 5)
+        pygame.draw.circle(self.screen, pygame.Color("red"), (int(camPos["x"]), int(self.offset+camPos["y"])), 10)
 
     def drawTargetPath(self):
         pygame.draw.lines(self.screen, pygame.Color("red"), False, self.optimalPath, 1)

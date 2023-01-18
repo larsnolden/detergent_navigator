@@ -30,18 +30,26 @@ class Controller:
         go.set_right_speed(self.MAX_SPEED)
         go.fwd()
         # self.viz.update(self.getCenterPosition(), self.wheelPositions, 0, self.totalDistanceTraveled, [0, 0])
+        self.viz.setBotPosition(self.encoder.getCenterPosition(), self.encoder.wheelPositions)
 
         while True:
             # update encoder position
             encoderPos = self.encoder.run()
+            print(f"encoder pos: {encoderPos}")
             # get the camera angle and perceived position
-            cameraPos, angle = self.camera.run(self.stateMachine.getState(), position)
-            self.steer(pid.getSteer(position))
-            if cameraPos is not None:
-                self.encoder.correctPosition(cameraPos, angle)
-            
-            steerStrength = self.pidController.getSteer(self.encoder.getCenterPosition()['x'])
+            cameraPos, angle = self.camera.run(self.statemachine.getState(), encoderPos)
+            # if cameraPos is not None:
+                # self.encoder.correctPosition(cameraPos, angle)
+            print(f"camera pos: {cameraPos}")
+            if cameraPos is not None and cameraPos['y'] < 200 and cameraPos['y'] > -200:
+                # camera position offsetting
+                # cameraPos['y'] -= 30
+                # self.encoder.correctPosition(cameraPos, angle)
+                self.viz.setCameraPos(cameraPos, angle)
+
+            steerStrength = self.pidController.getSteer(self.encoder.getCenterPosition())
             self.viz.setSteerStrength(steerStrength)
+            self.viz.displayText(f"current state: {self.statemachine.getState()}")
             self.steer(steerStrength)
             self.viz.display()
     
