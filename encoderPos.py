@@ -90,9 +90,9 @@ class encoderPos:
         rightEncoder = go.enc_read(1)
         # time.sleep(0.02)
 
-        if rightEncoder < self.lastEncoderValues["right"] or leftEncoder < self.lastEncoderValues["left"] or leftEncoder - self.lastEncoderValues["left"] > 18 or rightEncoder - self.lastEncoderValues["right"] > 18:
-            print("traveled too much")
-            return {'left': 0, 'right': 0}
+        #if rightEncoder < self.lastEncoderValues["right"] or leftEncoder < self.lastEncoderValues["left"] or leftEncoder - self.lastEncoderValues["left"] > 18 or rightEncoder - self.lastEncoderValues["right"] > 18:
+         #   print("traveled too much")
+          #  return {'left': 0, 'right': 0}
 
         print(f"right encoder: {rightEncoder}")
         print(f"left encoder: {leftEncoder}")
