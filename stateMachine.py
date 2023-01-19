@@ -1,29 +1,15 @@
+from bottlePositions import getBottlePositions
 # Params:
 B1 = (100, 110)
 BOTLE2R = (100, 110)
 BOTLE3R = (100, 110)
 
-# bottles 1-3
-bottlePositions = [
-    {
-        "x": 190,
-        "y": 50
-    },
-    {
-        "x": 90,
-        "y": -50
-    },
-    {
-        "x": 0,
-        "y": 0
-    }
-]
-
 # States:
 # state1 = 1 etc
 
 class stateMachine:
-    state = 2
+    state = 1
+    bottlePositions = getBottlePositions.getPosition()
     
     def __init__(self, visualizor):
         self.viz = visualizor

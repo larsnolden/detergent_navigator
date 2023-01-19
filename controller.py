@@ -3,6 +3,8 @@ from visualizer import Visualizor
 from cameraPos import cameraPos
 from encoderPos import encoderPos
 from stateMachine import stateMachine
+# from PIDPATH.main import PIDCoords
+from bottlePositions import getBottlePositions
 import gopigo as go
 # from sim import Simulator
 import math
@@ -26,11 +28,14 @@ class Controller:
         print("Controller setup complete!")
 
     def run(self):
+        self.initial_turn();
         go.set_left_speed(self.MAX_SPEED)
         go.set_right_speed(self.MAX_SPEED)
         #go.fwd()
         # self.viz.update(self.getCenterPosition(), self.wheelPositions, 0, self.totalDistanceTraveled, [0, 0])
         self.viz.setBotPosition(self.encoder.getCenterPosition(), self.encoder.wheelPositions)
+        # self.maxX = PIDCoords(cleanedCSV="./pidpathDataL3/output_clean.csv", resolution='cm').getMaxX()
+        self.maxX = getBottlePositions.getPosition()[0]['x'] - 10
 
         while True:
             # update encoder position
@@ -47,7 +52,11 @@ class Controller:
                 # self.encoder.correctPosition(cameraPos, angle)
                 # self.viz.setCameraPos(cameraPos, angle)
 
+
             steerStrength = self.pidController.getSteer(self.encoder.getCenterPosition())
+            if(self.encoder.getCenterPosition()['x'] > self.maxX):
+                go.stop()
+                
             self.viz.setSteerStrength(steerStrength)
             self.viz.displayText(f"current state: {self.statemachine.getState()}")
             self.steer(steerStrength)
@@ -69,6 +78,10 @@ class Controller:
         else:
             go.set_left_speed(self.MAX_SPEED + steerStrength)
             go.set_right_speed(self.MAX_SPEED)
+    
+    def initial_turn():
+        go.turn_right_wait_for_completion(180)
+        go.stop()
 
 
 
