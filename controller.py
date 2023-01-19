@@ -28,7 +28,7 @@ class Controller:
     def run(self):
         go.set_left_speed(self.MAX_SPEED)
         go.set_right_speed(self.MAX_SPEED)
-        go.fwd()
+        #go.fwd()
         # self.viz.update(self.getCenterPosition(), self.wheelPositions, 0, self.totalDistanceTraveled, [0, 0])
         self.viz.setBotPosition(self.encoder.getCenterPosition(), self.encoder.wheelPositions)
 
@@ -37,10 +37,10 @@ class Controller:
             encoderPos = self.encoder.run()
             print(f"encoder pos: {encoderPos}")
             # get the camera angle and perceived position
-            # cameraPos, angle = self.camera.run(self.statemachine.getState(), encoderPos)
+            cameraPos, angle = self.camera.run(self.statemachine.getState(), encoderPos)
             # if cameraPos is not None:
                 # self.encoder.correctPosition(cameraPos, angle)
-            # print(f"camera pos: {cameraPos}")
+            print(f"camera pos: {cameraPos}")
             # if cameraPos is not None and cameraPos['y'] < 200 and cameraPos['y'] > -200:
                 # camera position offsetting
                 # cameraPos['y'] -= 30
