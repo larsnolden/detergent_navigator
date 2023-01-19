@@ -1,19 +1,20 @@
-class bottlePositions:
-    def __init__(self, visualizor):
-      self.positions = [
+positions = [
             {
-                "x": 200,
+                "x": 190,
                 "y": 50
             },
             {
-                "x": 100,
+                "x": 90,
                 "y": -50
             },
             {
-                "x": 10,
+                "x": 0,
                 "y": 0
             }
         ]
 
-    def getPosition(self):
-        return self.positions
+class bottlePositions:
+    @staticmethod
+    def getBottlePositions():
+        global positions
+        return positions

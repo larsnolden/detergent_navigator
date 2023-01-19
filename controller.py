@@ -4,17 +4,18 @@ from cameraPos import cameraPos
 from encoderPos import encoderPos
 from stateMachine import stateMachine
 # from PIDPATH.main import PIDCoords
-from bottlePositions import getBottlePositions
+from bottlePositions import bottlePositions
 import gopigo as go
 # from sim import Simulator
 import math
+import time
 
 class Controller:
     DIST_WHEEL_TO_CENTER = 10/2 #cm
     MAX_SPEED = 100
     position = {
-        "x": 0,
-        "y": 350
+        "x": 340,
+        "y": 0
     }
 
     def __init__(self, debug=False):
@@ -28,14 +29,19 @@ class Controller:
         print("Controller setup complete!")
 
     def run(self):
-        self.initial_turn();
         go.set_left_speed(self.MAX_SPEED)
         go.set_right_speed(self.MAX_SPEED)
-        #go.fwd()
+        self.initial_turn()
+        go.stop()
+        time.sleep(5)
+        go.fwd()
+        go.set_left_speed(self.MAX_SPEED)
+        go.set_right_speed(self.MAX_SPEED)
+        go.fwd()
         # self.viz.update(self.getCenterPosition(), self.wheelPositions, 0, self.totalDistanceTraveled, [0, 0])
         self.viz.setBotPosition(self.encoder.getCenterPosition(), self.encoder.wheelPositions)
         # self.maxX = PIDCoords(cleanedCSV="./pidpathDataL3/output_clean.csv", resolution='cm').getMaxX()
-        self.maxX = getBottlePositions.getPosition()[0]['x'] - 10
+        self.maxX = bottlePositions.getBottlePositions()[0]['x']
 
         while True:
             # update encoder position
@@ -54,8 +60,10 @@ class Controller:
 
 
             steerStrength = self.pidController.getSteer(self.encoder.getCenterPosition())
-            if(self.encoder.getCenterPosition()['x'] > self.maxX):
-                go.stop()
+            if(self.encoder.getCenterPosition()['x'] <= 15):
+                while True:
+                    print('end reached, stopping')
+                    go.stop()
                 
             self.viz.setSteerStrength(steerStrength)
             self.viz.displayText(f"current state: {self.statemachine.getState()}")
@@ -70,19 +78,25 @@ class Controller:
         if steerStrength == 0:
             return
 
-        # Positive steer, go right, decrease throttle on left wheels
+        # Positive steer, go right, decrease throttle on right wheels
         if steerStrength > 0:
             go.set_left_speed(self.MAX_SPEED)
             go.set_right_speed(self.MAX_SPEED - steerStrength)
-        # Negative steer, go left, reduce throttle on left wheels
+        # Negative steer, go left, reduce throttle on left wheels (steerstrength is negative here)
         else:
             go.set_left_speed(self.MAX_SPEED + steerStrength)
             go.set_right_speed(self.MAX_SPEED)
     
-    def initial_turn():
-        go.turn_right_wait_for_completion(180)
-        go.stop()
-
+    def initial_turn(self):
+        DPR = 360.0/64
+        degrees = 180
+        go.turn_right(degrees)
+        self.encoder.setZero(go.enc_read(0), go.enc_read(1))
+        pulse = int(degrees//DPR)
+        while go.enc_read(0) < pulse:
+            self.encoder.run()
+            pass
+        go.fwd()
 
 
         

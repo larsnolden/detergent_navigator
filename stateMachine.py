@@ -1,4 +1,4 @@
-from bottlePositions import getBottlePositions
+from bottlePositions import bottlePositions
 # Params:
 B1 = (100, 110)
 BOTLE2R = (100, 110)
@@ -9,7 +9,7 @@ BOTLE3R = (100, 110)
 
 class stateMachine:
     state = 1
-    bottlePositions = getBottlePositions.getPosition()
+    bottlePositions = bottlePositions.getBottlePositions()
     
     def __init__(self, visualizor):
         self.viz = visualizor
@@ -29,11 +29,11 @@ class stateMachine:
     @staticmethod
     def getBottlePos(state):
         if state == 3: 
-            return [bottlePositions[2]]
+            return [stateMachine.bottlePositions[2]]
 
         return [
-            bottlePositions[state-1],
-            bottlePositions[state]
+            stateMachine.bottlePositions[state-1],
+            stateMachine.bottlePositions[state]
         ]
 
 

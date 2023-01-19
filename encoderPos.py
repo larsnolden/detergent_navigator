@@ -6,16 +6,16 @@ import time
 
 class encoderPos:
     DIST_WHEEL_TO_CENTER = 10/2 #cm
-    ENC_STEPSIZE = 20.73/18 #cm/step of the encoder
+    ENC_STEPSIZE = 20.33/18 #cm/step of the encoder
     MAX_SPEED = 100
     wheelPositions = {
         "left": {
             "x": 340.0,
-            "y": -DIST_WHEEL_TO_CENTER
+            "y": DIST_WHEEL_TO_CENTER
         },
         "right": {
             "x": 340.0,
-            "y": DIST_WHEEL_TO_CENTER
+            "y": -DIST_WHEEL_TO_CENTER
         }
     }
     lastEncoderValues = {
@@ -82,6 +82,10 @@ class encoderPos:
             "x": self.wheelPositions["left"]["x"] + xLeftWheelToCenterVector,
             "y": self.wheelPositions["left"]["y"] + yLeftWheelToCenterVector
         }
+
+    def setZero(self, left, right):
+        self.lastEncoderValues["left"] = left
+        self.lastEncoderValues["right"] = right
     
     def checkDisplacement(self):
         # Steps taken by each encoder (1 rotation = 18 steps)
