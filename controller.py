@@ -26,6 +26,7 @@ class Controller:
         print("Controller setup complete!")
 
     def run(self):
+        initial_turn();
         go.set_left_speed(self.MAX_SPEED)
         go.set_right_speed(self.MAX_SPEED)
         go.fwd()
@@ -69,6 +70,10 @@ class Controller:
         else:
             go.set_left_speed(self.MAX_SPEED + steerStrength)
             go.set_right_speed(self.MAX_SPEED)
+    
+    def initial_turn():
+        go.turn_right_wait_for_completion(180)
+        go.stop()
 
 
 
