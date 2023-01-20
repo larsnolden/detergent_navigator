@@ -46,8 +46,8 @@ class cameraPos:
                 print(f"hits: {hits[0]} and pos: {newPosition}")
                 angle1 = self.getAngle(hits[0][1], (x, y), (bottlePositions[0]['x'], bottlePositions[0]['y']))
                 angle2 = self.getAngle(hits[0][1], (x1, y1), (bottlePositions[0]['x'], bottlePositions[0]['y']))
-                self.viz.setCameraPos({"x":x,"y":y}, angle1)
-                self.viz.setCameraPos2({"x":x1,"y":y1}, angle2)
+                # self.viz.setCameraPos({"x":x,"y":y}, angle1)
+                # self.viz.setCameraPos2({"x":x1,"y":y1}, angle2)
                 angle = self.getAngle(hits[0][1], (newPosition['x'], newPosition['y']), (bottlePositions[0]['x'], bottlePositions[0]['y']))
                 print(f'new found angle: {angle} degrees: {math.degrees(angle)}')
 

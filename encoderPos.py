@@ -1,5 +1,5 @@
 from visualizer import Visualizor
-import gopigo as go
+# import gopigo as go
 # from sim import Simulator
 import math
 import time
@@ -11,11 +11,11 @@ class encoderPos:
     wheelPositions = {
         "left": {
             "x": 340.0,
-            "y": DIST_WHEEL_TO_CENTER
+            "y": -DIST_WHEEL_TO_CENTER
         },
         "right": {
             "x": 340.0,
-            "y": -DIST_WHEEL_TO_CENTER
+            "y": DIST_WHEEL_TO_CENTER
         }
     }
     lastEncoderValues = {
@@ -27,11 +27,12 @@ class encoderPos:
         "right": 0
     }
 
-    def __init__(self, visualizor):
+    def __init__(self, visualizor, sim):
         self.viz = visualizor
+        self.go = sim
         # Initializing encoder tracker with current position (offsetting)
-        self.lastEncoderValues["left"] = go.enc_read(0)
-        self.lastEncoderValues["right"] = go.enc_read(1)
+        self.lastEncoderValues["left"] = self.go.enc_read(0)
+        self.lastEncoderValues["right"] = self.go.enc_read(1)
         print("Controller setup complete!")
 
     # update the positioning of the encoders
@@ -89,9 +90,9 @@ class encoderPos:
     
     def checkDisplacement(self):
         # Steps taken by each encoder (1 rotation = 18 steps)
-        leftEncoder = go.enc_read(0)
+        leftEncoder = self.go.enc_read(0)
         # time.sleep(0.02)
-        rightEncoder = go.enc_read(1)
+        rightEncoder = self.go.enc_read(1)
         # time.sleep(0.02)
 
         #if rightEncoder < self.lastEncoderValues["right"] or leftEncoder < self.lastEncoderValues["left"] or leftEncoder - self.lastEncoderValues["left"] > 18 or rightEncoder - self.lastEncoderValues["right"] > 18:

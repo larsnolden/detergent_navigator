@@ -15,9 +15,9 @@ class PidController:
     # KDcorner = 12
 
      #straight
-    KPstraight = 2.5
-    KIstraight = 0.1
-    KDstraight = 12
+    KPstraight = 3
+    KIstraight = 0
+    KDstraight = 200
     
     #corner
     KPcorner = 2.5
@@ -32,8 +32,10 @@ class PidController:
         self.pidCorner.output_limits = (-255, 255)
         self.pidStraight.output_limits = (-255, 255)
 
-
         print("Pid controller setup done!")
+
+    def getPID(self):
+        return f"P:{self.KPstraight} I:{self.KIstraight} D:{self.KDstraight}"
 
     # Steer strength R[-255, 255]
     def getSteer(self, position):

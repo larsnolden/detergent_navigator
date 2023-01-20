@@ -3,7 +3,7 @@ import traceback
 
 from controller import Controller
 import pygame
-from gopigo import stop
+# from gopigo import stop
 # from PIDPATH.generator import generateFile
 import sys
 
@@ -12,8 +12,8 @@ if __name__ == "__main__":
     try:
         controller.run()
     except Exception as e:
-        stop()
+        # stop()
         print("Crashed")
         print(e)
         traceback.print_exc()
-        stop()
+        # stop()

@@ -6,6 +6,9 @@ class Visualizor:
     optimalPath = []
     texts = []
 
+    realPath = []
+    botPath = []
+
     botPos = []
     camPos = None
     angle = 0
@@ -14,17 +17,23 @@ class Visualizor:
     wheelPositions = []
     perpendicularVectors = []
 
-    def __init__(self, optimalpath):
+    def __init__(self, optimalpath, pid):
         pygame.init()
         for x in optimalpath:
             self.optimalPath.append([x, self.offset+optimalpath[x]])
         self.screen = pygame.display.set_mode([500, 500])
         self.screen.fill((255, 255, 255))
         self.font = pygame.font.SysFont(None, 20)
+        self.f = open(f"{pid}.csv", "w")
+        self.f.write(f"x,y\n")
         #self.surface = 
         #self.screen = pygame.transform.flip(self.screen, False, True)
         print("Simulator initialized!")
-    
+
+    def __del__(self):
+        print("saving and closing file")
+        self.f.close()
+
     def displayText(self, text):
         self.texts.append(text)
     
@@ -52,6 +61,8 @@ class Visualizor:
                  print("event happened, quit")
         self.screen.fill((255, 255, 255))
         self.drawTargetPath()
+        self.drawRealPath()
+        self.drawBotPath()
         self.drawRobot(self.botPos, self.wheelPositions)
         self.drawSteerBar(self.steer)
         self.drawCamPos(self.camPos, self.angle)
@@ -100,12 +111,20 @@ class Visualizor:
         textRect.center = (xPos, yPos)
         self.screen.blit(text, textRect)
 
+    def addRealPos(self, x, y):
+        self.realPath.append((x,y+self.offset))
+
+    def addBotPos(self, x, y):
+        self.f.write(f"{x},{y}\n")
+        self.botPath.append((x,y+self.offset))
+
+
     def drawRobot(self, pos, wheels):
         print(pos)
         print(wheels)
         if pos == [] or wheels == []:
             return
-        self.texts.append(f'bot pos: x:{pos["x"]} y:{pos["y"]}')
+        self.texts.append(f'bot pos: x:{round(pos["x"],1)} y:{round(pos["y"],1)}')
         #body
         pygame.draw.circle(self.screen, pygame.Color("black"), (int(pos["x"]), int(self.offset+pos["y"])), 5)
         pygame.draw.circle(self.screen, pygame.Color("black"), (int(pos["x"]), int(self.offset+pos["y"])), 10)
@@ -123,6 +142,16 @@ class Visualizor:
 
     def drawTargetPath(self):
         pygame.draw.lines(self.screen, pygame.Color("red"), False, self.optimalPath, 1)
+
+    def drawBotPath(self):
+        if len(self.botPath) < 2:
+            return
+        pygame.draw.lines(self.screen, pygame.Color("green"), False, self.botPath, 1)
+
+    def drawRealPath(self):
+        if len(self.realPath) < 2:
+            return
+        pygame.draw.lines(self.screen, pygame.Color("blue"), False, self.realPath, 1)
 
     def drawSteerBar(self, steerStrength):
         pygame.draw.rect(self.screen, pygame.Color("red"), pygame.Rect(128, 30, 255, 30))
